@@ -1,0 +1,59 @@
+{
+  "name": "kya-agent",
+  "version": "2.1.0",
+  "description": "KYA (Know Your Agent) — Real-time multi-agent AI security monitoring, AML risk assessment, and anti-fraud detection",
+  "main": "server.js",
+  "keywords": [
+    "security",
+    "monitoring",
+    "aml",
+    "anti-fraud",
+    "agent",
+    "risk",
+    "web3",
+    "blockchain",
+    "kya",
+    "scanner",
+    "skills",
+    "claude-code",
+    "cursor",
+    "codex"
+  ],
+  "author": {
+    "name": "23pds",
+    "url": "https://github.com/23pds"
+  },
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/23pds/kya-agent.git"
+  },
+  "homepage": "https://github.com/23pds/kya-agent",
+  "files": [
+    "server.js",
+    "src/",
+    "public/",
+    "skills/",
+    "AGENTS.md",
+    ".claude-plugin/",
+    ".cursor-plugin/"
+  ],
+  "scripts": {
+    "start": "node server.js",
+    "scan": "node src/scanner/skill-scanner.js",
+    "demo": "node src/demo/simulate.js",
+    "postinstall": "echo '\\n  🛡️  KYA Agent — Know Your Agent installed!\\n  Run: npm start\\n  Dashboard: http://localhost:3000\\n  Skills: kya-security-monitor\\n'"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "better-sqlite3": "^9.4.3",
+    "http-proxy": "^1.18.1",
+    "ws": "^8.16.0",
+    "ethers": "^6.11.1",
+    "js-yaml": "^4.1.0",
+    "gray-matter": "^4.0.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>KYA — Know Your Agent | Multi-Agent Security Monitor</title>
+  <meta name="description" content="Real-time multi-agent AI security monitoring, AML risk assessment, and anti-fraud detection.">
+  <meta name="theme-color" content="#0a0e17">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="index.css">
+  <link rel="icon" href="img/kya-logo.png" type="image/png">
+</head>
+<body>
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="header-left">
+      <div class="logo" id="logo-home" style="cursor:pointer" onclick="showHome()"><img src="img/kya-logo.png" alt="KYA" class="logo-img"> KYA <span>Know Your Agent</span></div>
+      <div class="header-status">
+        <span class="status-dot"></span>
+        <span id="monitor-status" data-i18n="monitoring_active">Monitoring Active</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <button class="lang-toggle" id="lang-toggle" onclick="toggleLang()" title="切换语言 / Switch Language">
+        <span class="lang-flag" id="lang-flag">🇨🇳</span>
+        <span class="lang-text" id="lang-text">中文</span>
+      </button>
+      <span id="ws-badge" class="ws-status ws-disconnected">⬤ <span data-i18n="disconnected">Disconnected</span></span>
+      <span style="font-size:12px;color:var(--text-muted)" id="clock"></span>
+    </div>
+  </header>
+
+  <!-- ═══ AGENT LIST HOME ═══ -->
+  <div id="home-view">
+    <!-- Home stats bar -->
+    <div class="home-stats-bar" id="home-stats-bar">
+      <div class="home-stat"><span class="home-stat-value" id="hs-agents">0</span><span class="home-stat-label" data-i18n="stat_monitored_agents">Monitored Agents</span></div>
+      <div class="home-stat"><span class="home-stat-value" id="hs-calls">0</span><span class="home-stat-label" data-i18n="stat_api_calls">API Calls</span></div>
+      <div class="home-stat"><span class="home-stat-value home-danger" id="hs-alerts">0</span><span class="home-stat-label" data-i18n="stat_open_alerts">Alerts</span></div>
+      <div class="home-stat"><span class="home-stat-value" id="hs-aml">0</span><span class="home-stat-label" data-i18n="aml_checks">AML Checks</span></div>
+    </div>
+    <!-- Agent cards grid -->
+    <div class="main" style="padding-top:16px">
+      <div class="agent-cards-grid" id="agent-cards-grid">
+        <div class="empty-state"><div class="icon">🔍</div><p data-i18n="loading">Loading...</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ AGENT DETAIL VIEW ═══ -->
+  <div id="detail-view" style="display:none">
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" id="breadcrumb">
+      <span class="breadcrumb-home" onclick="showHome()" data-i18n="all_agents">← All Agents</span>
+      <span class="breadcrumb-sep">›</span>
+      <span class="breadcrumb-agent" id="breadcrumb-agent">Agent</span>
+    </div>
+
+    <!-- TABS -->
+    <nav class="tabs" id="tabs">
+      <div class="tab active" data-tab="overview">📊 <span data-i18n="tab_overview">Overview</span></div>
+      <div class="tab" data-tab="api-monitor">📡 <span data-i18n="tab_api_monitor">API Monitor</span> <span class="badge badge-green" id="api-count-badge">0</span></div>
+      <div class="tab" data-tab="risk-alerts">⚠️ <span data-i18n="tab_risk_alerts">Risk Alerts</span> <span class="badge badge-red" id="alert-count-badge">0</span></div>
+      <div class="tab" data-tab="aml">🔒 <span data-i18n="tab_aml">AML Anti-Fraud</span></div>
+      <div class="tab" data-tab="chain-activity">⛓️ <span data-i18n="tab_chain_activity">Chain Activity</span></div>
+    </nav>
+
+    <main class="main">
+      <!-- ═══ OVERVIEW TAB ═══ -->
+      <div class="tab-content active" id="tab-overview">
+        <div class="stats-grid" id="stats-grid">
+          <div class="stat-card"><div class="stat-label" data-i18n="stat_api_calls">API Calls</div><div class="stat-value" id="stat-api-calls">-</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="stat_open_alerts">Alerts</div><div class="stat-value danger" id="stat-alerts">-</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="stat_critical_alerts">Critical</div><div class="stat-value danger" id="stat-critical">-</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="aml_flagged">AML Flagged</div><div class="stat-value danger" id="stat-aml-flagged">0</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="stat_chain_events">Chain Events</div><div class="stat-value" id="stat-chain">-</div></div>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title"><span class="icon">📈</span> <span data-i18n="card_risk_score">Risk Score</span></div>
+            <div class="score-ring-container" id="score-container">
+              <div class="score-ring">
+                <svg viewBox="0 0 140 140">
+                  <circle class="ring-bg" cx="70" cy="70" r="60"/>
+                  <circle class="ring-fill" id="score-ring-fill" cx="70" cy="70" r="60" stroke-dasharray="377" stroke-dashoffset="377"/>
+                </svg>
+                <div class="score-text">
+                  <div class="score-number" id="score-number">-</div>
+                  <div class="score-label-text" id="score-level">-</div>
+                </div>
+              </div>
+              <div class="score-details" id="score-details">
+                <div class="score-dim"><span class="score-dim-name">🔑 <span data-i18n="dim_credential">Credential</span></span><div class="score-dim-bar"><div class="score-dim-fill" id="bar-credential" style="width:0%"></div></div><span class="score-dim-value" id="val-credential">-</span></div>
+                <div class="score-dim"><span class="score-dim-name">🧠 <span data-i18n="dim_behavior">Behavior</span></span><div class="score-dim-bar"><div class="score-dim-fill" id="bar-behavior" style="width:0%"></div></div><span class="score-dim-value" id="val-behavior">-</span></div>
+                <div class="score-dim"><span class="score-dim-name">💰 <span data-i18n="dim_transaction">Transaction</span></span><div class="score-dim-bar"><div class="score-dim-fill" id="bar-transaction" style="width:0%"></div></div><span class="score-dim-value" id="val-transaction">-</span></div>
+                <div class="score-dim"><span class="score-dim-name">⛓️ <span data-i18n="dim_chain">Chain</span></span><div class="score-dim-bar"><div class="score-dim-fill" id="bar-chain" style="width:0%"></div></div><span class="score-dim-value" id="val-chain">-</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-title"><span class="icon">🚨</span> <span data-i18n="card_recent_alerts">Recent Alerts</span></div>
+            <div class="timeline" id="alerts-timeline"><div class="empty-state"><div class="icon">🔍</div><p data-i18n="waiting_events">Waiting...</p></div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="icon">📡</span> <span data-i18n="card_live_stream">Live API Stream</span></div>
+          <div class="table-container">
+            <table><thead><tr>
+              <th data-i18n="th_time">Time</th><th data-i18n="th_type">Type</th><th data-i18n="th_endpoint">Endpoint</th>
+              <th data-i18n="th_chain">Chain</th><th data-i18n="th_amount">Amount</th><th data-i18n="th_risk">Risk</th><th>AML</th><th data-i18n="th_status">Status</th>
+            </tr></thead>
+            <tbody id="live-api-table"><tr><td colspan="8" class="empty-state" data-i18n="waiting_api">Waiting...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ API MONITOR ═══ -->
+      <div class="tab-content" id="tab-api-monitor">
+        <div class="card">
+          <div class="card-title"><span class="icon">📡</span> <span data-i18n="card_full_api_log">Full API Log</span></div>
+          <div class="table-container" style="max-height:700px">
+            <table><thead><tr>
+              <th data-i18n="th_timestamp">Timestamp</th><th data-i18n="th_method">Method</th><th data-i18n="th_endpoint">Endpoint</th>
+              <th data-i18n="th_chain">Chain</th><th data-i18n="th_amount">Amount</th><th data-i18n="th_slippage">Slippage</th>
+              <th data-i18n="th_status">Status</th><th data-i18n="th_duration">Duration</th><th data-i18n="th_risk_score">Risk</th><th data-i18n="th_flags">Flags</th>
+            </tr></thead>
+            <tbody id="full-api-table"><tr><td colspan="10" class="empty-state" data-i18n="loading">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ RISK ALERTS ═══ -->
+      <div class="tab-content" id="tab-risk-alerts">
+        <div class="stats-grid" style="margin-bottom:20px">
+          <div class="stat-card"><div class="stat-label" data-i18n="sev_critical">Critical</div><div class="stat-value danger" id="alert-critical">0</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="sev_high">High</div><div class="stat-value danger" id="alert-high">0</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="sev_medium">Medium</div><div class="stat-value" id="alert-medium">0</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="sev_low">Low</div><div class="stat-value" id="alert-low">0</div></div>
+        </div>
+        <div class="card">
+          <div class="card-title"><span class="icon">⚠️</span> <span data-i18n="card_all_alerts">All Alerts</span></div>
+          <div class="table-container" style="max-height:600px">
+            <table><thead><tr>
+              <th data-i18n="th_time">Time</th><th data-i18n="th_severity">Severity</th><th data-i18n="th_category">Category</th>
+              <th data-i18n="th_rule">Rule</th><th data-i18n="th_description">Description</th><th data-i18n="th_status">Status</th>
+            </tr></thead>
+            <tbody id="alerts-full-table"><tr><td colspan="6" class="empty-state" data-i18n="no_alerts">No alerts</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══ AML TAB ═══ -->
+      <div class="tab-content" id="tab-aml">
+        <div class="stats-grid" style="margin-bottom:20px">
+          <div class="stat-card"><div class="stat-label" data-i18n="aml_total_checks">Total AML Checks</div><div class="stat-value" id="aml-total">0</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="aml_flagged_addrs">Flagged Addresses</div><div class="stat-value danger" id="aml-flagged">0</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="aml_mode">Mode</div><div class="stat-value" id="aml-mode" style="font-size:16px">-</div></div>
+          <div class="stat-card"><div class="stat-label" data-i18n="aml_cache_size">Cache Size</div><div class="stat-value" id="aml-cache">0</div></div>
+        </div>
+
+        <div class="grid-2col">
+          <div class="card">
+            <div class="card-title"><span class="icon">🔍</span> <span data-i18n="aml_address_check">Address Risk Check</span></div>
+            <div style="margin-bottom:16px">
+              <input id="aml-address-input" type="text" placeholder="0x..." style="width:100%;padding:10px 14px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-family:var(--font-mono);font-size:13px;margin-bottom:8px">
+              <div style="display:flex;gap:8px">
+                <select id="aml-chain-select" style="padding:8px 12px;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--bg-secondary);color:var(--text-primary);font-size:13px">
+                  <option value="ETH">Ethereum</option><option value="BSC">BSC</option><option value="SOL">Solana</option>
+                  <option value="TRX">TRON</option><option value="MATIC">Polygon</option><option value="ARB">Arbitrum</option>
+                </select>
+                <button onclick="checkAmlAddress()" style="padding:8px 20px;border-radius:var(--radius-sm);border:none;background:var(--accent);color:white;font-weight:600;cursor:pointer;font-size:13px" data-i18n="aml_check_btn">Check</button>
+              </div>
+            </div>
+            <div id="aml-result"></div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><span class="icon">🛡️</span> MistTrack <span data-i18n="aml_integration">Integration</span></div>
+            <div style="font-size:13px;color:var(--text-secondary);line-height:1.8">
+              <p><strong>MistTrack</strong> — SlowMist AML tracking tool</p>
+              <p>📊 400M+ addresses covered</p>
+              <p>🔍 500K+ threat intelligence entries</p>
+              <p>🔗 19 blockchains supported</p>
+              <p style="margin-top:12px"><strong>APIs:</strong></p>
+              <div style="margin-top:4px">
+                <span class="tag">v2/risk_score</span>
+                <span class="tag">v1/address_labels</span>
+                <span class="tag">v1/address_overview</span>
+                <span class="tag">v1/transactions_investigation</span>
+                <span class="tag">v1/address_trace</span>
+                <span class="tag">v1/address_counterparty</span>
+              </div>
+              <p style="margin-top:12px;color:var(--yellow)">⚡ Auto-checks all high-risk operations (swaps, approvals, bridges, transfers)</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title"><span class="icon">📋</span> <span data-i18n="aml_recent_checks">Recent AML Checks</span></div>
+          <div class="timeline" id="aml-timeline"><div class="empty-state"><div class="icon">🔒</div><p data-i18n="aml_waiting">Waiting for AML checks...</p></div></div>
+        </div>
+      </div>
+
+      <!-- ═══ CHAIN ACTIVITY ═══ -->
+      <div class="tab-content" id="tab-chain-activity">
+        <div class="card">
+          <div class="card-title"><span class="icon">⛓️</span> <span data-i18n="card_chain_events">On-Chain Events</span></div>
+          <div class="table-container" style="max-height:600px">
+            <table><thead><tr>
+              <th data-i18n="th_time">Time</th><th data-i18n="th_chain">Chain</th><th data-i18n="th_event">Event</th>
+              <th data-i18n="th_from">From</th><th data-i18n="th_to">To</th><th data-i18n="th_token">Token</th>
+              <th data-i18n="th_amount">Amount</th><th data-i18n="th_suspicious">Suspicious</th><th data-i18n="th_tx_hash">Tx Hash</th>
+            </tr></thead>
+            <tbody id="chain-events-table"><tr><td colspan="9" class="empty-state" data-i18n="monitoring_chain">Monitoring...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="img/kya-logo.png" alt="KYA" class="footer-logo">
+        <span class="footer-slogan">Know Your Agent Doing</span>
+      </div>
+      <div class="footer-links">
+        <span>KYA Security Monitor v2.0</span>
+        <span>·</span>
+        <span>Powered by 23pds</span>
+      </div>
+      <div class="footer-copy">© 2026 KYA — Know Your Agent. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

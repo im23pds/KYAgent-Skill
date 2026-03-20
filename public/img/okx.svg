@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" fill="none">
+  <circle cx="100" cy="100" r="90" fill="#000"/>
+  <circle cx="100" cy="100" r="90" stroke="#fff" stroke-width="2"/>
+  <text x="100" y="112" text-anchor="middle" font-family="Arial,sans-serif" font-weight="bold" font-size="52" fill="#fff">OKX</text>
+</svg>
