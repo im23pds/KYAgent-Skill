@@ -5,7 +5,7 @@ license: Apache-2.0
 metadata:
   author: 23pds
   version: "2.1.0"
-  homepage: "https://github.com/23pds/kya-agent"
+  homepage: "https://github.com/23pds/KYAgent-Skill"
 ---
 
 # KYA — Know Your Agent 🛡️
