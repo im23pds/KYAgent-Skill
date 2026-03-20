@@ -82,7 +82,7 @@ kya-agent/
 
 ## License
 
-Apache-2.0 © [23pds](https://github.com/23pds)
+Apache-2.0 © [23pds](https://github.com/im23pds)
 
 ## Powered by
 
