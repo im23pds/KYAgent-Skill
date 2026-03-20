@@ -20,13 +20,13 @@
 ### Via ClawHub (Recommended)
 
 ```bash
-npx skills add 23pds/kya-agent
+npx skills add 23pds/KYAgent-Skill
 ```
 
 ### Manual
 
 ```bash
-git clone https://github.com/23pds/kya-agent.git
+git clone https://github.com/23pds/KYAgent-Skill.git
 cd kya-agent
 npm install
 npm start
