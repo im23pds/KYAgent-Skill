@@ -1,14 +1,14 @@
 ---
-name: kya-security-monitor
+name: kyad-security-monitor
 description: "This skill should be used when the user asks to 'monitor AI agent security', 'check agent risk score', 'scan an agent skill package for vulnerabilities', 'run AML check on an address', 'detect credential exposure', 'analyze agent API call patterns', 'check if an address is flagged', 'monitor on-chain activity', 'assess agent behavior risk', or mentions security monitoring, AML anti-fraud, risk assessment, credential scanning, prompt injection detection, or agent behavior analysis. KYA (Know Your Agent) is a real-time multi-agent security monitoring system with AML integration. Do NOT use for general programming questions or non-security topics."
 license: Apache-2.0
 metadata:
   author: 23pds
   version: "2.1.0"
-  homepage: "https://github.com/23pds/KYAgent-Skill"
+  homepage: "https://github.com/23pds/KYAD-Skill"
 ---
 
-# KYA — Know Your Agent 🛡️
+# KYAD — Know Your Agent Doing🛡️
 
 Real-time multi-agent AI security monitoring with AML anti-fraud detection.
 
