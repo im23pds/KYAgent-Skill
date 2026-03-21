@@ -1,4 +1,4 @@
-# KYA Agent — Agent Instructions
+# KYAD Agent — Agent Instructions
 
 This is a **security monitoring skill** providing real-time AI agent monitoring, AML anti-fraud detection, and skill package vulnerability scanning.
 
