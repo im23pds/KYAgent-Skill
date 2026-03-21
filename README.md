@@ -17,6 +17,9 @@
 - 📱 **Mobile-Ready | 移动端适配** — Responsive UI optimized for phone status checking (响应式 UI，支持手机随时查看状态)
 - ⛓️ **Chain Monitor | 链上监控** — On-chain event tracking for suspicious transactions (链上可疑交易事件追踪)
 
+  <img width="577" height="759" alt="Snipaste_2026-03-21-00" src="https://github.com/user-attachments/assets/f9b8071f-9094-4747-b354-5cc37bd008e0" />
+
+
 ## Installation | 安装指南
 
 ### Via ClawHub (Recommended | 推荐)
