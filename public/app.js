@@ -144,7 +144,7 @@ async function loadAgentList() {
 
     card.innerHTML = `
       <div class="agent-card-header">
-        <div class="agent-logo"><img src="${esc(agent.logo || 'img/kya-logo.png')}" alt="${esc(agent.name)}" class="agent-logo-img" loading="lazy"></div>
+        <div class="agent-logo"><img src="${esc(agent.logo || 'img/kya-logo.png')}" onerror="this.src='img/kya-logo.png'" alt="${esc(agent.name)}" class="agent-logo-img" loading="lazy"></div>
         <div class="agent-card-info">
           <div class="agent-card-name">${esc(agent.name)}</div>
           <div class="agent-card-author">by ${esc(agent.author)} · v${esc(agent.version)}</div>
