@@ -1,4 +1,4 @@
-# KYA — Know Your Agent 🛡️
+# KYAD — Know Your Agent Doing 🛡️
 
 > Real-time multi-agent AI security monitoring, AML risk assessment, and anti-fraud detection.
 
@@ -20,13 +20,13 @@
 ### Via ClawHub (Recommended)
 
 ```bash
-npx skills add 23pds/KYAgent-Skill
+npx skills add 23pds/KYAD-Skill
 ```
 
 ### Manual
 
 ```bash
-git clone https://github.com/23pds/KYAgent-Skill.git
+git clone https://github.com/23pds/KYAD-Skill.git
 cd kya-agent
 npm install
 npm start
